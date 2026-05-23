@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quintal da Vina - Caixa Oficial</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #111827; color: #f3f4f6; padding: 15px; font-size: 16px; }
+        .container { max-width: 500px; margin: 0 auto; background: #1f2937; padding: 20px; border-radius: 16px; box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
+        
+        /* TELA DE LOGIN */
+        #tela-login { display: block; padding: 40px 10px; text-align: center; }
+        #tela-login h2 { margin-bottom: 10px; color: #ffffff; font-size: 28px; }
+        #tela-login p { color: #9ca3af; font-size: 15px; margin-bottom: 25px; }
+        #tela-login input { padding: 14px; border: 2px solid #4b5563; border-radius: 8px; background: #111827; color: white; width: 100%; max-width: 300px; font-size: 16px; text-align: center; margin-bottom: 15px; display: inline-block; }
+        
+        /* SISTEMA PRINCIPAL */
+        #sistema-principal { display: none; }
+        h2 { text-align: center; color: #ffffff; font-size: 24px; margin-bottom: 2px; }
+        .sub { text-align: center; color: #10b981; font-size: 13px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .usuario-logado { text-align: center; font-size: 14px; color: #ffffff; margin-bottom: 15px; background: #111827; padding: 8px; border-radius: 8px; border: 1px solid #374151; }
+        
+        /* ABAS */
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; background: #111827; padding: 4px; border-radius: 8px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 12px 10px; background: none; border: none; color: #9ca3af; font-weight: bold; font-size: 13px; cursor: pointer; border-radius: 6px; text-align: center; white-space: nowrap; }
+        .tab-btn.active { background: #10b981; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* CARDS E GRIDS */
+        .card { background: #111827; border: 1px solid #374151; padding: 16px; border-radius: 12px; margin-bottom: 14px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 17px; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .input-field { display: flex; flex-direction: column; gap: 4px; }
+        .input-field label { font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: bold; }
+        
+        input[type="number"], input[type="text"], select { padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #1f2937; color: #ffffff; font-size: 16px; width: 100%; }
+        .card-resultado { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #374151; font-size: 15px; color: #e5e7eb; }
+        
+        /* BOTÕES */
+        .btn-principal { display: block; width: 100%; padding: 14px; background: #10b981; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; }
+        .btn-secundario { display: block; width: 100%; padding: 12px; background: #3b82f6; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 8px; text-align: center; }
+        
+        /* PAINEL DE FECHAMENTO */
+        .painel { background: #111827; border: 2px solid #374151; color: white; padding: 18px; border-radius: 12px; margin-top: 15px; }
+        .painel-title { font-size: 14px; font-weight: bold; border-bottom: 1px solid #374151; padding-bottom: 6px; margin-bottom: 10px; text-align: center; color: #3b82f6; text-transform: uppercase; }
+        .painel-item { text-align: center; margin-bottom: 12px; }
+        .lbl-painel { font-size: 11px; text-transform: uppercase; color: #9ca3af; margin-bottom: 2px; }
+        .val-lucro { font-size: 28px; font-weight: bold; color: #10b981; }
+        .val-destaque { font-size: 22px; font-weight: bold; color: #ffffff; }
+        .val-fornecedor { font-size: 22px; font-weight: bold; color: #f87171; }
+        
+        /* LISTAS */
+        .lista-dados { background: #111827; border: 1px solid #374151; border-radius: 8px; max-height: 200px; overflow-y: auto; margin-top: 10px; padding: 8px; }
+        .item-linha { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #1f2937; font-size: 14px; }
+        .btn-remover { color: #f87171; background: none; border: none; cursor: pointer; font-size: 13px; font-weight: bold; padding: 2px 6px; }
+        
+        .check-pago { transform: scale(1.4); margin-right: 10px; cursor: pointer; }
+        .func-pago { opacity: 0.5; text-decoration: line-through; color: #9ca3af; }
+        .pix-tag { font-size: 11px; color: #60a5fa; display: block; margin-top: 2px; }
+        .total-topo { text-align: right; font-size: 13px; color: #9ca3af; margin-bottom: 10px; }
+        
+        /* HISTÓRICO */
+        .item-hist { font-size: 13px; padding: 8px; border-bottom: 1px solid #1f2937; color: #d1d5db; line-height: 1.4; }
+        .hist-hora { color: #9ca3af; font-family: monospace; margin-right: 6px; }
+        .hist-nome { color: #60a5fa; font-weight: bold; margin-right: 4px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <div id="tela-login">
+        <h2>Quintal da Vina</h2>
+        <p>Controle de Caixa & Portaria</p>
+        <input type="text" id="nome-operador" placeholder="Seu nome para o histórico..." autofocus>
+        <button class="btn-principal" onclick="realizarLogin()">Entrar no Sistema 🚀</button>
+    </div>
+
+    <div id="sistema-principal">
+        <h2>Quintal da Vina</h2>
+        <div class="sub">Controle de Caixa</div>
+        <div class="usuario-logado">👤 Operador: <strong id="nome-exibido">---</strong></div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="mudarAba('aba-bebidas', this)">🍾 Bebidas</button>
+            <button class="tab-btn" onclick="mudarAba('aba-ingressos', this)">🎟️ Ingressos</button>
+            <button class="tab-btn" onclick="mudarAba('aba-equipe', this)">👥 Equipe</button>
+            <button class="tab-btn" onclick="mudarAba('aba-shows', this)">🎵 Shows</button>
+            <button class="tab-btn" onclick="mudarAba('aba-portaria', this)">📝 Portaria</button>
+            <button class="tab-btn" onclick="mudarAba('aba-historico', this)">🕵️‍♂️ Histórico</button>
+        </div>
+
+        <div id="aba-bebidas" class="tab-content active">
+            <div class="card">
+                <div class="card-header"><span>Heineken</span> <span style="color: #10b981;">R$ 8,00</span></div>
+                <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px;">Custo: R$ 4,25</div>
+                <div class="input-grid">
+                    <div class="input-field"><label>Entrou</label><input type="number" id="estoque_Heineken" value="1200" oninput="atualizarBebidasDaTela()"></div>
+                    <div class="input-field"><label>Sobrou</label><input type="number" id="sobra_Heineken" value="0" onchange="registrarMudancaBebida('Heineken')"></div>
+                </div>
+                <div class="card-resultado"><span>Vendidas: <strong id="venda_Heineken" style="color: #60a5fa;">0</strong></span><span>Lucro: <strong id="lucro_Heineken" style="color: #10b981;">R$ 0,00</strong></span></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span>Original</span> <span style="color: #10b981;">R$ 7,00</span></div>
+                <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px;">Custo: R$ 3,40</div>
+                <div class="input-grid">
+                    <div class="input-field"><label>Entrou</label><input type="number" id="estoque_Original" value="1200" oninput="atualizarBebidasDaTela()"></div>
+                    <div class="input-field"><label>Sobrou</label><input type="number" id="sobra_Original" value="0" onchange="registrarMudancaBebida('Original')"></div>
+                </div>
+                <div class="card-resultado"><span>Vendidas: <strong id="venda_Original" style="color: #60a5fa;">0</strong></span><span>Lucro: <strong id="lucro_Original" style="color: #10b981;">R$ 0,00</strong></span></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span>Coca-Cola</span> <span style="color: #10b981;">R$ 6,00</span></div>
+                <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px;">Custo: R$ 3,50</div>
+                <div class="input-grid">
+                    <div class="input-field"><label>Entrou</label><input type="number" id="estoque_Coca" value="600" oninput="atualizarBebidasDaTela()"></div>
+                    <div class="input-field"><label>Sobrou</label><input type="number" id="sobra_Coca" value="0" onchange="registrarMudancaBebida('Coca-Cola')"></div>
+                </div>
+                <div class="card-resultado"><span>Vendidas: <strong id="venda_Coca" style="color: #60a5fa;">0</strong></span><span>Lucro: <strong id="lucro_Coca" style="color: #10b981;">R$ 0,00</strong></span></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span>Guaraná</span> <span style="color: #10b981;">R$ 6,00</span></div>
+                <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px;">Custo: R$ 3,50</div>
+                <div class="input-grid">
+                    <div class="input-field"><label>Entrou</label><input type="number" id="estoque_Guarana" value="600" oninput="atualizarBebidasDaTela()"></div>
+                    <div class="input-field"><label>Sobrou</label><input type="number" id="sobra_Guarana" value="0" onchange="registrarMudancaBebida('Guaraná')"></div>
+                </div>
+                <div class="card-resultado"><span>Vendidas: <strong id="venda_Guarana" style="color: #60a5fa;">0</strong></span><span>Lucro: <strong id="lucro_Guarana" style="color: #10b981;">R$ 0,00</strong></span></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span>Água</span> <span style="color: #10b981;">R$ 5,00</span></div>
+                <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px;">Custo: R$ 1,50</div>
+                <div class="input-grid">
+                    <div class="input-field"><label>Entrou</label><input type="number" id="estoque_Agua" value="600" oninput="atualizarBebidasDaTela()"></div>
+                    <div class="input-field"><label>Sobrou</label><input type="number" id="sobra_Agua" value="0" onchange="registrarMudancaBebida('Água')"></div>
+                </div>
+                <div class="card-resultado"><span>Vendidas: <strong id="venda_Agua" style="color: #60a5fa;">0</strong></span><span>Lucro: <strong id="lucro_Agua" style="color: #10b981;">R$ 0,00</strong></span></div>
+            </div>
+            <div class="painel">
+                <div class="painel-title">Resumo do Caixa de Bebidas</div>
+                <div class="painel-item"><div class="lbl-painel">🚨 VALOR DO FORNECEDOR (PAGAR)</div><div class="val-fornecedor" id="total_fornecedor">R$ 0,00</div></div>
+                <div class="painel-item"><div class="lbl-painel">🎉 LUCRO DAS BEBIDAS</div><div class="val-lucro" id="total_lucro_bebidas">R$ 0,00</div></div>
+            </div>
+        </div>
+
+        <div id="aba-ingressos" class="tab-content">
+            <div class="card">
+                <div class="input-field"><label>Preço do Ingresso (R$):</label><input type="number" id="preco_ingresso" value="20"></div>
+                <div class="input-field" style="margin: 10px 0;">
+                    <label>Forma de Pagamento:</label>
+                    <select id="ingresso_forma">
+                        <option value="📱 PIX">📱 PIX</option>
+                        <option value="💵 DINHEIRO">💵 DINHEIRO</option>
+                        <option value="💳 MÁQUINA">💳 MÁQUINA</option>
+                    </select>
+                </div>
+                <div class="input-field"><label>Quantidade Vendida:</label><input type="number" id="ingresso_qtd" value="1"></div>
+                <button type="button" class="btn-secundario" onclick="adicionarIngresso()">⚡ Registrar Venda</button>
+            </div>
+            <h3 style="font-size:14px; margin-top:15px; color:#3b82f6;">📋 Extrato de Vendas</h3>
+            <div class="lista-dados" id="lista_ing"></div>
+            <div class="painel">
+                <div class="painel-title">Fechamento de Ingressos</div>
+                <div class="painel-item"><div class="lbl-painel">🎟️ Total Vendidos</div><div class="val-destaque" id="total_ingressos_qtd">0</div></div>
+                <div class="painel-item"><div class="lbl-painel">💰 Faturamento Total</div><div class="val-lucro" id="total_ingressos_valor">R$ 0,00</div></div>
+            </div>
+        </div>
+
+        <div id="aba-equipe" class="tab-content">
+            <div class="total-topo">Total: <span id="topo_total_func" style="color:#ffffff;">R$ 0,00</span> | Pago: <span id="topo_pago_func" style="color:#10b981;">R$ 0,00</span></div>
+            <div class="card">
+                <input type="text" id="f_nome" placeholder="Nome do integrante" style="margin-bottom:8px;">
+                <input type="text" id="f_pix" placeholder="Chave PIX" style="margin-bottom:8px;">
+                <input type="number" id="f_val" placeholder="Cachê (R$)" style="margin-bottom:8px;">
+                <button class="btn-secundario" onclick="adicionarEquipe()">＋ Adicionar Integrante</button>
+            </div>
+            <div class="lista-dados" id="lista_func"></div>
+        </div>
+
+        <div id="aba-shows" class="tab-content">
+            <div class="total-topo">Total Custos: <span id="topo_total_serv" style="color:#f87171;">R$ 0,00</span></div>
+            <div class="card">
+                <input type="text" id="s_nome" placeholder="Nome da Atração" style="margin-bottom:8px;">
+                <input type="number" id="s_val" placeholder="Valor do Show (R$)" style="margin-bottom:8px;">
+                <button class="btn-secundario" onclick="adicionarShow()">＋ Adicionar Atração</button>
+            </div>
+            <div class="lista-dados" id="lista_shows"></div>
+        </div>
+
+        <div id="aba-portaria" class="tab-content">
+            <div class="card">
+                <input type="text" id="c_nome" placeholder="Nome do Cliente" style="margin-bottom:8px;">
+                <input type="number" id="c_qtd" value="1" style="margin-bottom:8px;">
+                <button class="btn-secundario" onclick="adicionarCliente()">＋ Adicionar na Lista</button>
+            </div>
+            <h3 style="margin-top:15px; font-size:14px;">Lista de Presença (<span id="contador_lista">0</span> pessoas)</h3>
+            <div class="lista-dados" id="lista_cli"></div>
+        </div>
+
+        <div id="aba-historico" class="tab-content">
+            <div style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">Linha do tempo de alterações:</div>
+            <div class="lista-dados" id="lista_historico" style="max-height: 300px;"></div>
+            <button class="btn-secundario" style="background:#dc2626; margin-top:15px;" onclick="limparHistorico()">⚠️ Limpar Histórico</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let usuarioAtual = "";
+    let db = { bebidas: {}, ing: [], func: [], shows: [], cli: [], historico: [] };
+    const precoCustoBebidas = { 
+        'Heineken': { custo: 4.25, venda: 8.00 }, 
+        'Original': { custo: 3.40, venda: 7.00 }, 
+        'Coca': { custo: 3.50, venda: 6.00 }, 
+        'Guarana': { custo: 3.50, venda: 6.00 }, 
+        'Agua': { custo: 1.50, venda: 5.00 } 
+    };
+
+    if(localStorage.getItem('dados_vina_festa')) {
+        db = JSON.parse(localStorage.getItem('dados_vina_festa'));
+        if(!db.historico) db.historico = [];
+    }
+
+    function realizarLogin() {
+        let nome = document.getElementById('nome-operador').value.trim();
+        if(nome === "") { alert("Digite seu nome!"); return; }
+        usuarioAtual = nome;
+        document.getElementById('nome-exibido').innerText = usuarioAtual;
+        document.getElementById('tela-login').style.display = "none";
+        document.getElementById('sistema-principal').style.display = "block";
+        adicionarAoHistorico("entrou no sistema");
+        carregarCamposBebidas();
+        renderizarTudo();
+    }
+
+    function mudarAba(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(a => a.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active'); 
+        btn.classList.add('active');
+    }
+
+    function obterHoraAtual() { return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+    
+    function adicionarAoHistorico(texto) { 
+        db.historico.unshift({ hora: obterHoraAtual(), nome: usuarioAtual, texto: texto }); 
+        salvar(); 
+        renderizarHistorico(); 
+    }
+    
+    function salvar() { localStorage.setItem('dados_vina_festa', JSON.stringify(db)); }
+
+    function carregarCamposBebidas() {
+        for (let chave in precoCustoBebidas) {
+            if(db.bebidas['e_' + chave] !== undefined) document.getElementById('estoque_' + chave).value = db.bebidas['e_' + chave];
+            if(db.bebidas['s_' + chave] !== undefined) document.getElementById('sobra_' + chave).value = db.bebidas['s_' + chave];
+        }
+    }
+
+    function atualizarBebidasDaTela() {
+        for (let chave in precoCustoBebidas) {
+            db.bebidas['e_' + chave] = document.getElementById('estoque_' + chave).value;
+            db.bebidas['s_' + chave] = document.getElementById('sobra_' + chave).value;
+        }
+        calcularBebidas(); 
+        salvar();
+    }
+
+    function registrarMudancaBebida(nomeBebida) {
+        let idSobra = nomeBebida === 'Coca-Cola' ? 'Coca' : nomeBebida === 'Guaraná' ? 'Guarana' : nomeBebida === 'Água' ? 'Agua' : nomeBebida;
+        let sobra = document.getElementById('sobra_' + idSobra).value;
+        adicionarAoHistorico(`alterou a sobra de ${nomeBebida} para ${sobra || 0}`);
+        atualizarBebidasDaTela();
+    }
+
+    function calcularBebidas() {
+        let fornecedorGeral = 0; let lucroGeral = 0;
+        for (let chave in precoCustoBebidas) {
+            let p = precoCustoBebidas[chave];
+            let estoque = parseInt(document.getElementById('estoque_' + chave).value) || 0;
+            let sobra = parseInt(document.getElementById('sobra_' + chave).value) || 0;
+            if (sobra > estoque) sobra = estoque;
+            let vendidas = estoque - sobra;
+            fornecedorGeral += vendidas * p.custo;
+            lucroGeral += (vendidas * p.venda) - (vendidas * p.custo);
+            document.getElementById('venda_' + chave).innerText = vendidas;
+            document.getElementById('lucro_' + chave).innerText = 'R$ ' + ((vendidas * p.venda) - (vendidas * p.custo)).toFixed(2);
+        }
+        document.getElementById('total_fornecedor').innerText = 'R$ ' + fornecedorGeral.toFixed(2);
+        document.getElementById('total_lucro_bebidas').innerText = 'R$ ' + lucroGeral.toFixed(2);
+    }
+
+    function adicionarIngresso() {
+        let p = parseFloat(document.getElementById('preco_ingresso').value) || 0;
+        let forma = document.getElementById('ingresso_forma').value;
+        let q = parseInt(document.getElementById('ingresso_qtd').value) || 0;
+        if (q <= 0) return;
+        db.ing.push({ forma, q, valor: q * p });
+        document.getElementById('ingresso_qtd').value = "1";
+        adicionarAoHistorico(`vendeu ${q} ing. no ${forma} (R$ ${(q*p).toFixed(2)})`);
+        renderizarIngressos();
+    }
+
+    function removerIngresso(x) {
+        let item = db.ing[x];
+        adicionarAoHistorico(`estornou venda de ${item.q} ing. (${item.forma})`);
+        db.ing.splice(x, 1); 
+        renderizarIngressos();
+    }
+
+    function renderizarIngressos() {
+        let c = document.getElementById('lista_ing'); c.innerHTML = ""; let accQtd = 0; let accVal = 0;
+        for (let i = db.ing.length - 1; i >= 0; i--) {
+            let v = db.ing[i]; accQtd += v.q; accVal += v.valor;
+            c.innerHTML += `<div class="item-linha"><span><strong>${v.q} un.</strong> &bull; ${v.forma} &rarr; <span style="color:#10b981">R$ ${v.valor.toFixed(2)}</span></span><button class="btn-remover" onclick="removerIngresso(${i})">Estornar</button></div>`;
+        }
+        document.getElementById('total_ingressos_qtd').innerText = accQtd;
+        document.getElementById('total_ingressos_valor').innerText = 'R$ ' + accVal.toFixed(2);
+        salvar();
+    }
+
+    function adicionarEquipe() {
+        let n = document.getElementById('f_nome').value.trim();
+        let p = document.getElementById('f_pix').value.trim() || "Não informada";
+        let v = parseFloat(document.getElementById('f_val').value) || 0;
+        if (!n) return;
+        db.func.push({ n, p, v, pago: false });
+        document.getElementById('f_nome').value = ""; document.getElementById('f_pix').value = ""; document.getElementById('f_val').value = "";
+        adicionarAoHistorico(`adicionou integrante ${n} (Cachê: R$ ${v})`);
+        renderizarFuncionarios();
+    }
+
+    function alternarPagamento(x) {
+        db.func[x].pago = !db.func[x].pago;
+        adicionarAoHistorico(`${db.func[x].pago ? 'marcou PAGO' : 'desmarcou'} de ${db.func[x].n}`);
+        renderizarFuncionarios();
+    }
+
+    function removerFuncionario(x) { 
+        adicionarAoHistorico(`removeu integrante ${db.func[x].n}`); 
+        db.func.splice(x, 1); 
+        renderizarFuncionarios(); 
+    }
+
+    function renderizarFuncionarios() {
+        let c = document.getElementById('lista_func'); c.innerHTML = ""; let tot = 0; let pag = 0;
+        db.func.forEach((f, x) => {
+            tot += f.v; if (f.pago) pag += f.v;
+            c.innerHTML += `<div class="item-linha ${f.pago?'func-pago':''}"><div style="display:flex; align-items:center;"><input type="checkbox" class="check-pago" ${f.pago?'checked':''} onclick="alternarPagamento(${x})"><div><strong>${f.n}</strong> &bull; R$ ${f.v.toFixed(2)}<span class="pix-tag">🔑 PIX: ${f.p}</span></div></div><button class="btn-remover" onclick="removerFuncionario(${x})">X</button></div>`;
+        });
+        document.getElementById('topo_total_func').innerText = "R$ " + tot.toFixed(2); 
+        document.getElementById('topo_pago_func').innerText = "R$ " + pag.toFixed(2); 
+        salvar();
+    }
+
+    function adicionarShow() {
+        let n = document.getElementById('s_nome').value.trim(); let v = parseFloat(document.getElementById('s_val').value) || 0;
+        if (!n) return;
+        db.shows.push({ n, v });
+        document.getElementById('s_nome').value = ""; document.getElementById('s_val').value = "";
+        adicionarAoHistorico(`adicionou atração ${n} (R$ ${v})`); 
+        renderizarServicos();
+    }
+
+    function removerShow(x) { 
+        adicionarAoHistorico(`removeu atração ${db.shows[x].n}`); 
+        db.shows.splice(x, 1); 
+        renderizarServicos(); 
+    }
+    
+    function renderizarServicos() {
+        let c = document.getElementById('lista_shows'); c.innerHTML = ""; let tot = 0;
+        db.shows.forEach((s, x) => { tot += s.v; c.innerHTML += `<div class="item-linha"><span><strong>${s.n}</strong> &bull; R$ ${s.v.toFixed(2)}</span><button class="btn-remover" onclick="removerShow(${x})">X</button></div>`; });
+        document.getElementById('topo_total_serv').innerText = "R$ " + tot.toFixed(2); 
+        salvar();
+    }
+
+    function adicionarCliente() {
+        let n = document.getElementById('c_nome').value.trim(); let q = parseInt(document.getElementById('c_qtd').value) || 1;
+        if (!n) return;
+        db.cli.push({ n, q });
+        document.getElementById('c_nome').value = ""; document.getElementById('c_qtd').value = "1";
+        adicionarAoHistorico(`colocou ${n} (${q} un.) na portaria`); 
+        renderizarClientes();
+    }
+
+    function removerCliente(x) { 
+        adicionarAoHistorico(`removeu ${db.cli[x].n} da portaria`); 
+        db.cli.splice(x, 1); 
+        renderizarClientes(); 
+    }
+    
+    function renderizarClientes() {
+        let c = document.getElementById('lista_cli'); c.innerHTML = ""; let tot = 0;
+        db.cli.forEach((item, x) => { tot += item.q; c.innerHTML += `<div class="item-linha"><span><strong>${item.n}</strong> (${item.q} un.)</span><button class="btn-remover" onclick="removerCliente(${x})">X</button></div>`; });
+        document.getElementById('contador_lista').innerText = tot; 
+        salvar();
+    }
+
+    function renderizarHistorico() {
+        let c = document.getElementById('lista_historico');
+        if(db.historico.length === 0) { c.innerHTML = "<div style='text-align:center;color:#64748b;padding:15px;'>Vazio</div>"; return; }
+        c.innerHTML = "";
+        db.historico.forEach(h => { c.innerHTML += `<div class="item-hist"><span class="hist-hora">[${h.hora}]</span><span class="hist-nome">${h.nome}</span> <span>${h.texto}</span></div>`; });
+    }
+
+    function limparHistorico() { 
+        if(confirm("Apagar histórico de atividades?")) { db.historico = []; adicionarAoHistorico("limpou a linha do tempo"); } 
+    }
+    
+    function renderizarTudo() { 
+        calcularBebidas(); 
+        renderizarIngressos(); 
+        renderizarFuncionarios(); 
+        renderizarServicos(); 
+        renderizarClientes(); 
+        renderizarHistorico(); 
+    }
+</script>
+</body>
+</html>
